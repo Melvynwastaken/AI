@@ -1,0 +1,4 @@
+Flask==2.3.2
+requests==2.31.0
+wikipedia-api==0.5.8
+transformers==4.30.2
