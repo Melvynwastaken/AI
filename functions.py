@@ -1,8 +1,10 @@
 from flask import Flask, request, jsonify
 import requests
-import wikipedia
-from datetime import datetime
+import wikipediaapi
+from datetime import datetime,timedelta
 from transformers import pipeline
+import threading
+import time
 
 app = Flask(__name__)
 
@@ -35,15 +37,18 @@ def get_quote():
         return response.json()['contents']['quotes'][0]['quote']
     else:
         return 'Could not retrieve quote at this time.'
+    
+wiki_wiki = wikipediaapi.Wikipedia('en')
 
 def get_wikipedia_info(query):
     try:
-        summary = wikipedia.summary(query, sentences=2)
-        return summary
-    except wikipedia.exceptions.DisambiguationError as e:
-        return f'There are multiple results for "{query}". Please be more specific.'
-    except wikipedia.exceptions.PageError:
-        return 'No results found for your query.'
+        page = wiki_wiki.page(query)
+        if page.exists():
+            return page.summary[:500]  # Return the first 500 characters of the summary
+        else:
+            return 'No results found for your query.'
+    except Exception as e:
+        return str(e)
 
 # GPT-2
 def generate_response(prompt):
@@ -81,3 +86,37 @@ def ask():
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+
+alarms = []
+
+def check_alarms():
+    while True:
+        current_time = datetime.now()
+        for alarm in alarms:
+            if current_time >= alarm['time'] and not alarm['triggered']:
+                print(f"Alarm: {alarm['message']}")
+                alarm['triggered'] = True
+        time.sleep(1)
+
+threading.Thread(target=check_alarms, daemon=True).start()
+
+@app.route('/set_alarm', methods=['POST'])
+def set_alarm():
+    data = request.json
+    alarm_time_str = data.get('time')
+    alarm_message = data.get('message', 'Alarm!')
+
+    try:
+        alarm_time = datetime.strptime(alarm_time_str, '%Y-%m-%d %H:%M:%S')
+    except ValueError:
+        return jsonify({"error": "Invalid time format. Use YYYY-MM-DD HH:MM:SS"}), 400
+
+    alarms.append({
+        'time': alarm_time,
+        'message': alarm_message,
+        'triggered': False
+    })
+
+    return jsonify({"status": "Alarm set", "time": alarm_time_str, "message": alarm_message})
+
