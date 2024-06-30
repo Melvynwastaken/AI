@@ -119,4 +119,4 @@ def set_alarm():
     })
 
     return jsonify({"status": "Alarm set", "time": alarm_time_str, "message": alarm_message})
-
+# still working to fix some bugs also for the alarmyou need to declare it in your json since at this point there isn't really a database structure
