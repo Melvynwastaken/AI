@@ -4,3 +4,4 @@ wikipedia-api==0.5.8
 transformers==4.30.2
 tensorflow>=2.0.0
 torch>=1.0.0 
+tf-keras>=2.16.0

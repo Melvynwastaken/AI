@@ -38,18 +38,46 @@ def get_quote():
     else:
         return 'Could not retrieve quote at this time.'
     
-wiki_wiki = wikipediaapi.Wikipedia('en')
-
-def get_wikipedia_info(query):
+def get_page_html(title):
     try:
-        page = wiki_wiki.page(query)
-        if page.exists():
-            return page.summary[:500]  # Return the first 500 characters of the summary
-        else:
-            return 'No results found for your query.'
-    except Exception as e:
-        return str(e)
+        url = f"https://en.wikipedia.org/w/api.php?action=parse&section=0&prop=text&format=json&page={title}"
+        response = requests.get(url)
+        response.raise_for_status()
+        data = response.json()
+        html_content = data['parse']['text']['*']
+        return html_content
+    except requests.exceptions.RequestException as e:
+        print(f"Error fetching Wikipedia page: {e}")
+        return None
+    except KeyError as e:
+        print(f"KeyError: {e}. JSON response does not contain expected structure.")
+        return None
 
+def get_first_infobox(html):
+    soup = BeautifulSoup(html, 'html.parser')
+    results = soup.find_all(class_='infobox')
+    if not results:
+        raise LookupError('Page has no infobox')
+    return results[0]
+
+def clean_text(text):
+    only_ascii = ''.join([char if char in string.printable else ' ' for char in text])
+    no_dup_spaces = re.sub(' +', ' ', only_ascii)
+    no_dup_newlines = re.sub('\n+', '\n', no_dup_spaces)
+    return no_dup_newlines
+
+def get_first_infobox_text(title):
+    html = get_page_html(title)
+    if html is None:
+        return "Failed to retrieve Wikipedia page."
+    
+    try:
+        infobox = get_first_infobox(html)
+        infobox_text = clean_text(infobox.text)
+        return infobox_text
+    except Exception as e:
+        print(f"Error processing infobox: {e}")
+        return "An error occurred while processing the Wikipedia page."
 # GPT-2
 def generate_response(prompt):
     responses = nlp(prompt, max_length=50, num_return_sequences=1)
