@@ -1,6 +1,7 @@
 import subprocess
 import webbrowser
 
+# you can add more here just add the refered name and then the execution path
 applications = {
     "notepad": "notepad.exe",
     "calculator": "calc.exe",
@@ -8,8 +9,8 @@ applications = {
     "word": "C:\\Program Files\\Microsoft Office\\root\\Office16\\WINWORD.EXE",
     "paint": "mspaint.exe",
     "excel":"C:\\Program Files\\Microsoft Office\\root\\Office16\\EXCEL.EXE",
-    "discord": "enter your path here",
-    "spotify": "enter spotify path here",
+    "jupyter": "jupyter lab",
+    "powerbi": "PBIDesktopStore.exe",
 }
 
 def open_application(app_name):
@@ -23,12 +24,17 @@ def open_application(app_name):
             return f"Failed to open {app_name}: {str(e)}"
     else:
         return f"{app_name} not found."
-
+    
+# same goes for websites but in this case use url
 websites = {"wiki": "https://en.wikipedia.org/wiki/Main_Page",
             "youtube":"https://www.youtube.com/",
             "github":"https://github.com/Melvynwastaken",
             "wayback":"https://wayback-api.archive.org/",
-            "gpt": "https://chat.openai.com/"
+            "gpt": "https://chat.openai.com/",
+            "steam": "https://store.steampowered.com/",
+            "discord":"https://discord.com/channels/@me",
+            "spotify":"https://open.spotify.com",
+            
 }
 
 def open_web(web_name):
