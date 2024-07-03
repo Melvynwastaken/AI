@@ -5,6 +5,7 @@ from datetime import datetime,timedelta
 from transformers import pipeline
 import threading
 import time
+from bs4 import BeautifulSoup
 
 app = Flask(__name__)
 
