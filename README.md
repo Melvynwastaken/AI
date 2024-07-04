@@ -39,7 +39,7 @@ This is a Flask-based assistant application that provides various functionalitie
 1. Run the Flask application:
 
     ```sh
-    python app.py
+    python functions.py
     ```
 
 ### Note
