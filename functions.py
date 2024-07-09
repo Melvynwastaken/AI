@@ -6,6 +6,8 @@ from transformers import pipeline
 import threading
 import time
 from bs4 import BeautifulSoup
+from openai import OpenAI
+import openai
 
 app = Flask(__name__)
 
@@ -80,6 +82,8 @@ def get_first_infobox_text(title):
         print(f"Error processing infobox: {e}")
         return "An error occurred while processing the Wikipedia page."
 # GPT-2
+openai.api_key = '' # put your key here
+
 def generate_response(prompt):
     responses = nlp(prompt, max_length=50, num_return_sequences=1)
     return responses[0]['generated_text']
