@@ -6,7 +6,6 @@ from transformers import pipeline
 import threading
 import time
 from bs4 import BeautifulSoup
-from openai import OpenAI
 import openai
 
 app = Flask(__name__)
