@@ -11,7 +11,7 @@ import openai
 app = Flask(__name__)
 
 # pre trained cause why not
-nlp = pipeline("text-generation", model="gpt2")
+nlp = pipeline("text-generation", model="gpt-3.5-turbo")
 
 # get ur api key first
 def get_weather(location):
@@ -80,7 +80,7 @@ def get_first_infobox_text(title):
     except Exception as e:
         print(f"Error processing infobox: {e}")
         return "An error occurred while processing the Wikipedia page."
-# GPT-2
+# GPT
 openai.api_key = '' # put your key here
 
 def generate_response(prompt):
